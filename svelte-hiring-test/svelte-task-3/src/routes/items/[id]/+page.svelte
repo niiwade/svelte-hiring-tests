@@ -16,7 +16,7 @@
   function goBack() {
     // TODO: Student needs to implement navigation back to home
     // Uncomment and fix this:
-    // goto('/');
+     goto('/');
   }
 </script>
 

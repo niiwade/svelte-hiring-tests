@@ -1,15 +1,73 @@
 <script lang="ts">
+    import { writable } from "svelte/store";
+
     interface CarouselItem {
         id: string;
         src: string;
         alt: string;
     }
 
-    export let items: CarouselItem[] = [];
+    export let items: CarouselItem[] = [
+        { id: "1", src: "cat1.jpg", alt: "Slides 1" },
+        { id: "2", src: "cat2.jpg", alt: "Slides 2" },
+        { id: "3", src: "cat3.jpg", alt: "Slides 3" },
+        { id: "4", src: "cat4.jpg", alt: "Slides 4" },
+        { id: "5", src: "cat5.jpg", alt: "Slides 5" },
+        { id: "6", src: "cat6.jpg", alt: "Slides 6" },
+    ];
+
+    let currentSlide = writable(0);
+
+    function nextSlide() {
+        currentSlide.update((a) => (a + 1) % items.length);
+    }
+
+    function previousSlide() {
+        currentSlide.update((a) => (a - 1 + items.length) % items.length);
+    }
+
+    function goToNextSlide(index: number) {
+        currentSlide.set(index);
+    }
+
+    $: slideTransform = `translateX(-${$currentSlide * 100}%)`;
 </script>
 
 <div class="carousel">
     <!-- Carousel structure goes here -->
+    <div class="carousel__container">
+        <div
+            class="carousel__track"
+            style:transform={slideTransform}
+        >
+            {#each items as { src, alt }, index(index)}
+                <div class="carousel__slide" >
+                    <img class="carousel__image" {src} {alt}  />
+                </div>
+            {/each}
+        </div>
+    </div>
+
+
+    <button class="carousel__arrow carousel__arrow--left" on:click={previousSlide}>
+<p>←</p>
+    </button>
+
+    <button class="carousel__arrow carousel__arrow--right" on:click={nextSlide}>
+<p> → </p>
+    </button>
+
+    <div class="carousel__dots">
+        {#each items as _ , index(index)}
+<span 
+class="carousel__dot" 
+class:carousel__dot--active={index === $currentSlide}
+ on:click={() => goToNextSlide(index)}> 
+</span>
+        {/each}
+
+    </div>
+
 </div>
 
 <style>
